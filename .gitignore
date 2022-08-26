@@ -2,4 +2,4 @@
 input/*.xml
 *.csv
 output/!*.md
-output/*/!*.md
+output/**/!*.md
