@@ -1,5 +1,4 @@
 # exclude everything
 input/*.xml
 *.csv
-output/!*.md
-output/**/!*.md
+
