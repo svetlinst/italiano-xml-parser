@@ -66,4 +66,6 @@ if invoice_parser:
         shutil.copyfile(invoice_xl_template, output)
 
         # Open the new copy and append the info from the invoice
-        # xl_template = load_workbook(templates_dir / f'invoice_{counter}_{getattr(invoice, "FurnizorCIF")}.xlsx')
+        invoice_xl = load_workbook(output)
+        invoice_xl.worksheets[0]['C11'].value = getattr(invoice.header, 'ClientNume')
+        invoice_xl.save(output)
