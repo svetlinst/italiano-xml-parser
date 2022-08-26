@@ -25,6 +25,22 @@ class InvoiceParser:
     def __init__(self, data_dict):
         self.data_dict = data_dict
         self.invoices = []
+        self.ind = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.ind < len(self.invoices):
+            return_value = self.invoices[self.ind]
+            self.ind += 1
+            return return_value
+        raise StopIteration
+
+    # Same as __iter__() but using a generator
+    def get_next_invoice(self):
+        for inv in self.invoices:
+            yield inv
 
     def parse_invoice_data(self):
         # Iterate over all invoice XML headers. Italiano vero XML headers below
