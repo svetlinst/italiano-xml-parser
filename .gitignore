@@ -1,2 +1,3 @@
 # exclude everything
 input/*.xml
+*.csv
