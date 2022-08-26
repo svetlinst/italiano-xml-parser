@@ -1,0 +1,1 @@
+# This folder should not contain any files in git. Its purpose is to store sensitive outputs.

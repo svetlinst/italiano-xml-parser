@@ -1,4 +1,4 @@
 # exclude everything
 input/*.xml
 *.csv
-output/*
+output/*.xlsx
