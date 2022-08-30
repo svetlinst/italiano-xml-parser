@@ -8,6 +8,8 @@ import shutil
 from openpyxl import load_workbook
 
 # Config path to directories
+from utils.formatting_utilities import write_to_cell, merge_cells
+
 project_dir = Path(os.path.dirname(os.path.abspath(__file__)))
 input_dir = Path(project_dir / 'input')
 templates_dir = Path(project_dir / 'templates')
@@ -71,10 +73,10 @@ if invoice_parser:
         invoice_xl = load_workbook(output)
         ws = invoice_xl.worksheets[0]
 
-        # ToDo: Apply formatting when updating the excel file
         # Update header
         for key, val in mapper.HEADER_FIELD_MAPPING.items():
-            ws[val].value = getattr(invoice.header, key)
+            write_to_cell(getattr(invoice.header, key), ws[val])
+            # ws[val].value = getattr(invoice.header, key)
 
         # Update the line items
         line_items_cnt = len(invoice.detail.line_items)
@@ -93,7 +95,9 @@ if invoice_parser:
         for li in invoice.detail.line_items:
             for key, val in mapper.LINE_ITEM.items():
                 coord = val + str(current_row)
-                ws[coord].value = getattr(li, key)
+                write_to_cell(getattr(li, key), ws[coord])
+
+            merge_cells(current_row, ws)
             current_row += 1
 
         # Save the workbook
