@@ -60,3 +60,33 @@ class InvoiceParser:
             invoice = Invoice(header, detail)
             # Append the Invoice to the list of invoice part of the loaded XML input
             self.invoices.append(invoice)
+
+
+class XmlToInvoiceMapper:
+    HEADER_FIELD_MAPPING = {
+        'FurnizorNume': 'T11',
+        'FurnizorCIF': 'X16',
+        'FurnizorNrRegCom': 'X15',
+        'FurnizorJudet': 'X12',
+        'FurnizorAdresa': 'X13',
+        'FurnizorIBAN': 'Q42',
+        'ClientNume': 'C11',
+        'ClientInformatiiSuplimentare': 'I19',
+        'ClientCIF': 'I16',
+        'ClientNrRegCom': 'I15',
+        'ClientAdresa': 'I13',
+        'ClientTelefon': 'I18',
+        'FacturaNumar': 'G6',
+        'FacturaData': 'O6',
+    }
+
+    LINE_ITEM = {
+        'LinieNrCrt': 'C',
+        'Descriere': 'G',
+        'CodArticolFurnizor': 'D',
+        'UM': 'U',
+        'Cantitate': 'W',
+        'Pret': 'AA',
+        'Valoare': 'AF',
+        'CotaTVA': 'AC',
+    }

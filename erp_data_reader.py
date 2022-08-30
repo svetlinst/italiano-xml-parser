@@ -2,10 +2,10 @@ import datetime
 import os
 from pathlib import Path
 import xmltodict
-from models.erp_models import InvoiceParser
+from models.erp_models import InvoiceParser, XmlToInvoiceMapper
 import logging
 import shutil
-from openpyxl import Workbook, load_workbook
+from openpyxl import load_workbook
 
 # Config path to directories
 project_dir = Path(os.path.dirname(os.path.abspath(__file__)))
@@ -52,6 +52,8 @@ for file in files_available:
         logging.exception('message')
         raise ValueError('Error parsing the data!')
 
+mapper = XmlToInvoiceMapper()
+
 if invoice_parser:
     # Create a new directory that will contain the Excel output files
     output_sub_folder_name = 'invoices_' + datetime.datetime.now().strftime('%d-%m-%Y-%H-%M-%S')
@@ -67,5 +69,32 @@ if invoice_parser:
 
         # Open the new copy and append the info from the invoice
         invoice_xl = load_workbook(output)
-        invoice_xl.worksheets[0]['C11'].value = getattr(invoice.header, 'ClientNume')
+        ws = invoice_xl.worksheets[0]
+
+        # ToDo: Apply formatting when updating the excel file
+        # Update header
+        for key, val in mapper.HEADER_FIELD_MAPPING.items():
+            ws[val].value = getattr(invoice.header, key)
+
+        # Update the line items
+        line_items_cnt = len(invoice.detail.line_items)
+        # Insert rows if needed
+        if line_items_cnt > 1:
+            # Offset the merged cells
+            merged_cells_range = [x for x in ws.merged_cells.ranges if x.min_row > 23]
+            for merged_cell in merged_cells_range:
+                merged_cell.shift(0, line_items_cnt - 1)
+
+            # Insert new rows where the line items will be written
+            ws.insert_rows(25, line_items_cnt - 1)
+
+        # Populate the data
+        current_row = 23
+        for li in invoice.detail.line_items:
+            for key, val in mapper.LINE_ITEM.items():
+                coord = val + str(current_row)
+                ws[coord].value = getattr(li, key)
+            current_row += 1
+
+        # Save the workbook
         invoice_xl.save(output)
