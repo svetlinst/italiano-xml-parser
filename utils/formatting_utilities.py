@@ -1,10 +1,19 @@
-from openpyxl.styles import Font
+from openpyxl.styles import Font, Alignment
 
 
 def write_to_cell(text: str, cell):
     cell.value = text
     cell.font = Font(name='Times New Roman')
-    # cell.alignment.wrapText = True
+    align_text(cell)
+
+
+def align_text(cell):
+    if cell.row == 11:  # Header row
+        cell.alignment = Alignment(horizontal='center')
+    elif cell.column > 19 and cell.row > 21:  # Line item numbers
+        cell.alignment = Alignment(horizontal='right')
+    else:  # Everything else
+        cell.alignment = Alignment(horizontal='left')
 
 
 def merge_cells(row_num, ws):
@@ -20,4 +29,3 @@ def merge_cells(row_num, ws):
 
     for col_range in col_ranges:
         ws.merge_cells(col_range)
-
